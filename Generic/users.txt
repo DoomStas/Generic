@@ -1,0 +1,4 @@
+﻿Stanisav | Dumchykov | 35
+Anna | Ivanova | 28
+John | Smith | 40
+Maria | Garcia | 22
