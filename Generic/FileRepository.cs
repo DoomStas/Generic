@@ -7,7 +7,7 @@ using System.IO;
 
 namespace Generic
 {
-    public class FileRepository<T> where T : IFileEntity, new()
+    public class FileRepository<T> : IRepository<T> where T : IIdentity
     {
         private string _filePath;
 
@@ -18,44 +18,64 @@ namespace Generic
 
         //Get all objeckt from file
 
+        public void Remove(T item)
+        {
+            throw new NotImplementedException();
+        }
+
         public List<T> GetAll()
         {
-            var items = new List<T>();
+            throw new NotImplementedException();
 
-            if (!File.Exists(_filePath))
-            {
-                return items;
-            }
-
-            string[] lines = File.ReadAllLines(_filePath);
-
-            foreach (var line in lines)
-            {
-                // Skip empty lines
-                if (string.IsNullOrWhiteSpace(line))
-                {
-                    continue;
-                }
-                string[] rawFields = line.Split('|');
-                // Trim whitespace from each field
-                string[] trimmedFields = new string[rawFields.Length];
-                for (int i = 0; i < rawFields.Length; i++)
-                {
-                    trimmedFields[i] = rawFields[i].Trim();
-                }
-                T item = new T();
-                item.FromFileFields(trimmedFields);
-                items.Add(item);
-            }
-            return items;
+            // var items = new List<T>();
+            //
+            // if (!File.Exists(_filePath))
+            // {
+            //     return items;
+            // }
+            //
+            // string[] lines = File.ReadAllLines(_filePath);
+            //
+            // foreach (var line in lines)
+            // {
+            //     // Skip empty lines
+            //     if (string.IsNullOrWhiteSpace(line))
+            //     {
+            //         continue;
+            //     }
+            //     string[] rawFields = line.Split('|');
+            //     // Trim whitespace from each field
+            //     string[] trimmedFields = new string[rawFields.Length];
+            //     for (int i = 0; i < rawFields.Length; i++)
+            //     {
+            //         trimmedFields[i] = rawFields[i].Trim();
+            //     }
+            //     T item = new T();
+            //     item.FromFileFields(trimmedFields);
+            //     items.Add(item);
+            // }
+            // return items;
         }
+
+        public T GetById(int id)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Add(T item)
         {
-            // Open the file in append mode and write the new item
-            using (StreamWriter sw = File.AppendText(_filePath))
-            { 
-                sw.WriteLine(item.ToFileString());
-            }
+            throw new NotImplementedException();
+
+            // // Open the file in append mode and write the new item
+            // using (StreamWriter sw = File.AppendText(_filePath))
+            // { 
+            //     sw.WriteLine(item.ToFileString());
+            // }
+        }
+
+        public void Update(T item)
+        {
+            throw new NotImplementedException();
         }
     }
 }
