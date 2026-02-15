@@ -7,7 +7,7 @@ using System.IO;
 
 namespace Generic
 {
-    public class FileRepository<T> : IRepository<T> where T : IIdentity
+    public class FileRepository<T> : IRepository<T> where T : IIdentity, IFileEntity, new()
     {
         private string _filePath;
 
@@ -17,65 +17,64 @@ namespace Generic
         }
 
         //Get all objeckt from file
+        public List<T> GetAll()
+        {
+            List<T> list = new List<T>();
+            string[] lines = File.ReadAllLines(_filePath);
+            int currentId = 1;
+            foreach (string line in lines)
+            { 
+                if (string.IsNullOrWhiteSpace(line))
+                    continue;
+                string[] fields = line.Split('|');
+                T item = new T();
+                item.FromFileFields(fields);
+                item.Id = currentId++;
+                list.Add(item);
+            }
+            return list;
+        }
 
         public void Remove(T item)
         {
-            throw new NotImplementedException();
-        }
-
-        public List<T> GetAll()
-        {
-            throw new NotImplementedException();
-
-            // var items = new List<T>();
-            //
-            // if (!File.Exists(_filePath))
-            // {
-            //     return items;
-            // }
-            //
-            // string[] lines = File.ReadAllLines(_filePath);
-            //
-            // foreach (var line in lines)
-            // {
-            //     // Skip empty lines
-            //     if (string.IsNullOrWhiteSpace(line))
-            //     {
-            //         continue;
-            //     }
-            //     string[] rawFields = line.Split('|');
-            //     // Trim whitespace from each field
-            //     string[] trimmedFields = new string[rawFields.Length];
-            //     for (int i = 0; i < rawFields.Length; i++)
-            //     {
-            //         trimmedFields[i] = rawFields[i].Trim();
-            //     }
-            //     T item = new T();
-            //     item.FromFileFields(trimmedFields);
-            //     items.Add(item);
-            // }
-            // return items;
+            List<T> items = GetAll();
+            items.RemoveAll(i => i.Id == item.Id);
+            SaveAll(items);
         }
 
         public T GetById(int id)
         {
-            throw new NotImplementedException();
+            List<T> items = GetAll();
+            return items.FirstOrDefault(i => i.Id == id);
         }
 
         public void Add(T item)
         {
-            throw new NotImplementedException();
-
-            // // Open the file in append mode and write the new item
-            // using (StreamWriter sw = File.AppendText(_filePath))
-            // { 
-            //     sw.WriteLine(item.ToFileString());
-            // }
+            using (StreamWriter sw = new StreamWriter(_filePath))
+            {
+                sw.WriteLine(item.ToFileString());
+            }
         }
 
         public void Update(T item)
         {
-            throw new NotImplementedException();
+            List<T> items = GetAll();
+            int index = items.FindIndex(i => i.Id == item.Id);
+            if(index != -1)
+            {
+                items[index] = item;
+                SaveAll(items);
+            }
+        }
+        public void SaveAll(List<T> items)
+        {
+            using (StreamWriter sw = new StreamWriter(_filePath))
+            {
+                foreach (T item in items)
+                {
+                    sw.WriteLine(item.ToFileString());
+                }
+            }
         }
     }
 }

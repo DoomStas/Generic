@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Generic
 {
-    public class User : IIdentity
+    public class User : IIdentity, IFileEntity
     {
         public int Id { get; set; }
 
